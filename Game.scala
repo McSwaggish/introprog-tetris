@@ -5,10 +5,11 @@ object Game {
         var gameOff:          Boolean = false //for game loop
         var increaseGravity:  Boolean = false
         var rotateThisFrame:  Boolean = false //to relocate Tetromino.rotate() from handleEvents() to updateFalling()
+        var isFilled:         Boolean = true
         var timer:            Int     = 0     //to make tetromino not fall every frame
         var delay:            Int     = 300   //delay between falls in ms
         var landDisplayState: Int     = 1
-        var isFilled:         Boolean = true
+        var points:           Int     = 0
     }
 
     object Color {
@@ -166,11 +167,20 @@ class Game() {
                     isFilled = false
             }
             if(isFilled)
-                println(s"$i broken")
+                points += 1000
+                println(s"points: $points")
                 for(y <- 0 until i;
                     x <- 1 until 11)
                     matrix(i - y)(x) = matrix(i - 1 - y)(x)
         }
+    }
+
+    def checkForLoss(): Boolean = {
+        for(i <- 1 until matrix(0).length - 1)
+            if (matrix(1)(i) != 0)
+                println("YOU LOSE")
+                return true
+        false
     }
 
     //shit to do when stuff lands
@@ -189,6 +199,9 @@ class Game() {
             updatePosition()
         else
             updateLanded()
+            if (checkForLoss())
+                gameOff = true
+                println(Console.RED + "YOUR LOOSER !")
             respawn()
             landDisplayState = 1
         

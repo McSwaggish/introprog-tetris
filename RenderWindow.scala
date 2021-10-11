@@ -3,7 +3,7 @@ package tetris
 import javax.swing.event.DocumentEvent.EventType
 
 class RenderWindow(
-    val windowSize: (Int, Int) = (20, 20),
+    val windowSize: (Int, Int) = (12, 20), //SHOULD BE (20, 20)
     val blockSize:  Int        = 45,
     val title:      String     = "Тетрис"
 ) {
