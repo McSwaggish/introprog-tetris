@@ -2,11 +2,13 @@ package tetris
 
 object Game {
     object Variables {
-        var gameOff:         Boolean = false
-        var increaseGravity: Boolean = false
-        var rotateThisFrame: Boolean = false
-        var timer:           Int     = 0
-        var delay:           Int     = 300
+        var gameOff:          Boolean = false //for game loop
+        var increaseGravity:  Boolean = false
+        var rotateThisFrame:  Boolean = false //to relocate Tetromino.rotate() from handleEvents() to updateFalling()
+        var timer:            Int     = 0     //to make tetromino not fall every frame
+        var delay:            Int     = 300   //delay between falls in ms
+        var landDisplayState: Int     = 1
+        var isFilled:         Boolean = true
     }
 
     object Color {
@@ -25,6 +27,7 @@ object Game {
 
     def drawTheRightColour(colourIndex: Int): java.awt.Color = {
         colourIndex match {
+            case 0 => Color.black
             case 1 => Color.green
             case 2 => Color.blue
             case 3 => Color.yellow
@@ -37,6 +40,7 @@ object Game {
         }
     }
 
+    //game matrix (no shit)
     val matrix: Array[Array[Int]] = Array.ofDim[Int](21, 12)
 }
 
@@ -46,32 +50,31 @@ class Game() {
     import Tetromino._
     val window = new RenderWindow()
 
-    //init(?) matrix
+    //initializing matrix
     for(i <- 0 until 20;
-        j <- 0 until 12) {
+        j <- 0 until 12)
         matrix(i)(j) = 0
-    }
 
-    for(i <- 0 until 12) {
+    //floor beneath screen to check for collisions in empty matrix
+    for(i <- 0 until 12)
         matrix(20)(i) = 12
-        //matrix(i)(i) = 12
-        //matrix(17)(i) = 5
-        //matrix(15)(i) = 7
-    }
 
-    //SIDES - CHANGE COLOUR CERISE IS NOT THE BEST FIT FFS
+    //side pillars
     for(i <- 0 until 20)
-        matrix(i)(0)  = 8
-        matrix(i)(11) = 8
+        matrix(i)(0)   = 8
+        matrix(i)(11)  = 8
 
     def drawLanded(): Unit = {
         for(i <- 0 until matrix.length;
             j <- 0 until matrix(0).length) {
-                if(matrix(i)(j) != 0) //if certain block is occupied, draw shit
+                if(matrix(i)(j) != 0) //if certain block is occupied, draw shit ????? looking back, what????
                     window.draw(j, i, drawTheRightColour(matrix(i)(j)))
+                else if(matrix(i)(j) == 0)
+                    window.clear(j, i)
             }
     }
 
+    //erase entire tetromino
     def eraseFalling(): Unit = {
         for(i <- 0 until currTet.length;
             j <- 0 until currTet(0).length) {
@@ -80,6 +83,7 @@ class Game() {
             }
     }
 
+    //draw entire tetromino
     def drawFalling(): Unit = {
         for(i <- 0 until currTet.length;
             j <- 0 until currTet(0).length) {
@@ -88,6 +92,7 @@ class Game() {
             }
     }
 
+    //checks for collision under falling tetromino
     def canFall(): Boolean = {
         for(i <- 0 until currTet.length;
             j <- 0 until currTet(0).length) {
@@ -98,6 +103,7 @@ class Game() {
         true
     }
 
+    //checks for collision on left side of tetromino
     def canMoveLeft(): Boolean = {
         for(i <- 0 until currTet.length;
             j <- 0 until currTet(0).length) {
@@ -107,6 +113,8 @@ class Game() {
                 }
         true
     }
+
+    //HAHAHAHAHAHAHAHAHAHAHAHAH
     def canMoveRight(): Boolean = {
         for(i <- 0 until currTet.length;
             j <- 0 until currTet(0).length) {
@@ -117,8 +125,10 @@ class Game() {
         true
     }
 
+    //handle keyboard inputs and fucking with the window
     def handleEvents(): Unit = {
         var e = window.nextEvent()
+        increaseGravity = false
         while (e != RenderWindow.Event.Undefined) {
             e match
                 case RenderWindow.Event.KeyPressed(key) =>
@@ -139,6 +149,7 @@ class Game() {
         }
     }
 
+    //add landed tetromino to all the shit at the bottom ukno
     def addToLanded(): Unit = {
         for(i <- 0 until currTet.length;
             j <- 0 until currTet(0).length) {
@@ -147,9 +158,25 @@ class Game() {
                 }
     }
 
+    def checkLinesAndClear(): Unit = {
+        for(i <- 0 until matrix.length - 1) {
+            isFilled = true
+            for(j <- 1 until matrix(0).length - 1){
+                if(matrix(i)(j) == 0)
+                    isFilled = false
+            }
+            if(isFilled)
+                println(s"$i broken")
+                for(y <- 0 until i;
+                    x <- 1 until 11)
+                    matrix(i - y)(x) = matrix(i - 1 - y)(x)
+        }
+    }
+
+    //shit to do when stuff lands
     def updateLanded(): Unit = {
         addToLanded()
-        //check lines
+        checkLinesAndClear()
     }
 
     def updateFalling(canThisShitFall: Boolean): Unit = {
@@ -163,19 +190,30 @@ class Game() {
         else
             updateLanded()
             respawn()
+            landDisplayState = 1
+        
+        stopMovinglmfao() //makes the tetromino stop moving left/right if moving HAHAHHAHAHAH
     }
 
     def display(state: Int): Unit = {
         if (state == 1)
             drawLanded()
+            landDisplayState = 0
     }
 
     def willFall(): Boolean = {
-        if(timer >= (if(increaseGravity) 50 else delay))
+        if(timer >= (if(increaseGravity) 20 else delay))
             timer = 0
             true
         else
             false
+    }
+
+    def checkIfThisShitWIllFall(): Unit = { //exists only to leep gameLoop() looking nice
+        if (willFall())
+            fallNext(true)
+        else
+            fallNext(false)
     }
 
     def gameLoop(): Unit = {
@@ -183,19 +221,13 @@ class Game() {
             val t0: Long = System.currentTimeMillis
 
             handleEvents()
-            
-            if (willFall())
-                fallNext(true)
-            else
-                fallNext(false)
-
+            checkIfThisShitWIllFall()
             updateFalling(canFall())
-            stopMovinglmfao()
-            display(1)
+            display(landDisplayState)
 
             val deltaTime: Int = (System.currentTimeMillis - t0).toInt
-            timer += ((80 - deltaTime) max 0)
-            Thread.sleep((80 - deltaTime) max 0)
+            timer += ((80 - deltaTime) max 0) //add deltaTime to gravity timer
+            Thread.sleep((80 - deltaTime) max 0) //make every frame longer as not to draw shit 100000 times / sec
         }
     }
 
@@ -206,10 +238,3 @@ class Game() {
     def startGame(): Unit =
         gameLoop()
 }
-
-
-
-
-
-
-

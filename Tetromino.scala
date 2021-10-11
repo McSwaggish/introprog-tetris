@@ -8,7 +8,7 @@ object Tetromino {
     val spawnOffset: Vector[Int] = Vector(3, 0)
     val topLeft:     Array[Int]  = spawnOffset.toArray
 
-    var tetrominoIndex: Int = java.util.Random().nextInt(7) + 1
+    var tetrominoIndex: Int = java.util.Random().nextInt(5) //cant start with S or Z
 
     var potentialOffsetX: Int = 0
     var potentialOffsetY: Int = 0
