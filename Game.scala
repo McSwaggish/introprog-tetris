@@ -163,9 +163,11 @@ class Game() {
         for(i <- 0 until matrix.length - 1) {
             isFilled = true
             for(j <- 1 until matrix(0).length - 1){
+                //checks every line for empty space, if there is its not filled
                 if(matrix(i)(j) == 0)
                     isFilled = false
             }
+            //if line is filled, give points and move every line above down one step
             if(isFilled)
                 points += 1000
                 println(s"points: $points")
@@ -177,7 +179,7 @@ class Game() {
 
     def checkForLoss(): Boolean = {
         for(i <- 1 until matrix(0).length - 1)
-            if (matrix(1)(i) != 0)
+            if (matrix(1)(i) != 0) //if there is shit at y = 1
                 println("YOU LOSE")
                 return true
         false
@@ -190,7 +192,7 @@ class Game() {
     }
 
     def updateFalling(canThisShitFall: Boolean): Unit = {
-        if (canThisShitFall)
+        if (canThisShitFall) //if tetromino can fall
             eraseFalling()
             if(rotateThisFrame)
                 rotateThisFrame = false
@@ -203,7 +205,7 @@ class Game() {
                 gameOff = true
                 println(Console.RED + "YOUR LOOSER !")
             respawn()
-            landDisplayState = 1
+            landDisplayState = 1 //tells display() to draw landed blocks
         
         stopMovinglmfao() //makes the tetromino stop moving left/right if moving HAHAHHAHAHAH
     }

@@ -13,12 +13,13 @@ class RenderWindow(
     window.setPosition(300, 0)
 
 
+    //draw black without the frame
     def clear(x: Int, y: Int): Unit =
         window.fill(x * blockSize, y * blockSize, blockSize, blockSize, java.awt.Color(0x00, 0x00, 0x00))
 
     def draw(x: Int, y: Int, color: java.awt.Color): Unit =
-        window.fill(x * blockSize, y * blockSize, blockSize, blockSize, java.awt.Color(0x22, 0x22, 0x22)) //make black later
-        window.fill(x * blockSize + 3, y * blockSize + 3, blockSize - 6, blockSize - 6, color)
+        window.fill(x * blockSize, y * blockSize, blockSize, blockSize, java.awt.Color(0x22, 0x22, 0x22)) //frame
+        window.fill(x * blockSize + 3, y * blockSize + 3, blockSize - 6, blockSize - 6, color) //colored block
     
 
     def nextEvent(): RenderWindow.Event.EventType = {

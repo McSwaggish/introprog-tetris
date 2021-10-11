@@ -10,6 +10,7 @@ object Tetromino {
 
     var tetrominoIndex: Int = java.util.Random().nextInt(5) //cant start with S or Z
 
+    //potential next positions, if conditions are met
     var potentialOffsetX: Int = 0
     var potentialOffsetY: Int = 0
 
@@ -189,6 +190,7 @@ object Tetromino {
                    Array(1, 2, 3, 4) )
     }
 
+    //current tetromino falling in game
     def currTet: Array[Array[Int]] = {
         tetrominoIndex match
             case 0 => O_tetromino(rotation)
@@ -200,16 +202,19 @@ object Tetromino {
             case 6 => Z_tetromino(rotation)
     }
 
+    //tells tetromino to fall next frame
     def fallNext(yes: Boolean): Unit =
         if(yes)
             potentialOffsetY = 1
         else
             potentialOffsetY = 0
     
+    //move left
     def moveLeft(): Unit = {
         potentialOffsetX = -1
     }
 
+    //HAHAHAHAHAHAHAH
     def moveRight(): Unit = {
         potentialOffsetX = 1
     }
@@ -221,9 +226,11 @@ object Tetromino {
             rotation = 0
     }
 
-    def stopMovinglmfao(): Unit = //VERY GOOD PROFESSIONAL CODING PRACTICE
+    //VERY GOOD PROFESSIONAL CODING PRACTICE
+    def stopMovinglmfao(): Unit =
         potentialOffsetX = 0
 
+    //tetrominos next pose, if conditions are met
     def nextPos: (Int, Int) =
         (topLeft(0) + potentialOffsetX,
          topLeft(1) + potentialOffsetY)
