@@ -203,6 +203,17 @@ object Tetromino {
             case 6 => Z_tetromino(rotation)
     }
 
+    def nextTet: Array[Array[Int]] = {
+        nextTetrominoIndex match
+            case 0 => O_tetromino(0)
+            case 1 => T_tetromino(0)
+            case 2 => I_tetromino(0)
+            case 3 => J_tetromino(0)
+            case 4 => L_tetromino(0)
+            case 5 => S_tetromino(0)
+            case 6 => Z_tetromino(0)
+    }
+
     //tells tetromino to fall next frame
     def fallNext(yes: Boolean): Unit =
         if(yes)

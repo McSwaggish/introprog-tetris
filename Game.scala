@@ -207,6 +207,19 @@ class Game() {
         checkLinesAndClear()
     }
 
+    def nextPieceDisplay(): Unit = {
+        window.typeWriter("Next: ", 13, 6, java.awt.Color(0xff, 0xff, 0xff), 30, 0, -15)
+        
+        for(i <- 7 until 11;
+            j <- 13 until 17)
+            window.clear(j, i)
+        
+        for(i <- 0 until nextTet.length;
+            j <- 0 until nextTet(0).length)
+            if(nextTet(i)(j) != 0)
+                window.draw(j + 13, i + 7, drawTheRightColour(nextTet(i)(j)))
+    }
+
     def gameOverSequence(): Unit = {
         for(i <- 0 until 20)
             for(j <- 1 until 11)
@@ -225,7 +238,7 @@ class Game() {
         else
             updateLanded()
             respawn()
-            updateText()
+            nextPieceDisplay()
             landDisplayState = 1 //tells display() to draw landed blocks
             if (checkForLoss())
                 landDisplayState = 2
@@ -244,7 +257,7 @@ class Game() {
     }
 
     def willFall(): Boolean = {
-        if(timer >= (if(increaseGravity) 20 else delay))
+        if(timer >= (if(increaseGravity) {points += 5; 20} else delay))
             timer = 0
             true
         else
@@ -260,6 +273,7 @@ class Game() {
 
     def gameLoop(): Unit = {
         updateText() //initialize text
+        nextPieceDisplay()
         while(!gameOff) {
             val t0: Long = System.currentTimeMillis
 
@@ -267,6 +281,7 @@ class Game() {
             checkIfThisShitWIllFall()
             updateFalling(canFall())
             display(landDisplayState)
+            updateText()
 
             val deltaTime: Int = (System.currentTimeMillis - t0).toInt
             timer += ((80 - deltaTime) max 0) //add deltaTime to gravity timer
