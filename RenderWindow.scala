@@ -3,7 +3,7 @@ package tetris
 import javax.swing.event.DocumentEvent.EventType
 
 class RenderWindow(
-    val windowSize: (Int, Int) = (12, 20), //SHOULD BE (20, 20)
+    val windowSize: (Int, Int) = (20, 20), //SHOULD BE (20, 20)
     val blockSize:  Int        = 45,
     val title:      String     = "Тетрис"
 ) {
@@ -20,6 +20,18 @@ class RenderWindow(
     def draw(x: Int, y: Int, color: java.awt.Color): Unit =
         window.fill(x * blockSize, y * blockSize, blockSize, blockSize, java.awt.Color(0x22, 0x22, 0x22)) //frame
         window.fill(x * blockSize + 3, y * blockSize + 3, blockSize - 6, blockSize - 6, color) //colored block
+    
+    def drawFull(x: Int, y: Int, color: java.awt.Color): Unit =
+        window.fill(x * blockSize, y * blockSize, blockSize, blockSize, color)
+    
+    def typeWriter(text:    String,
+                   x:       Int,
+                   y:       Int,
+                   clr:     java.awt.Color,
+                   fntSize: Int,
+                   xOffset: Int,
+                   yOffset: Int): Unit =
+                   window.drawText(text, x * blockSize + xOffset, y * blockSize + yOffset, clr, fntSize)
     
 
     def nextEvent(): RenderWindow.Event.EventType = {

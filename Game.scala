@@ -159,7 +159,15 @@ class Game() {
                 }
     }
 
+    def updateText(): Unit = {
+        for(i <- 2 until 4;
+            j <- 13 until 20)
+            window.clear(j, i)
+        window.typeWriter(s"Points: $points", 13, 2, java.awt.Color(0xff, 0xff, 0xff), 30, 0, 0)
+    }
+
     def checkLinesAndClear(): Unit = {
+        var lineBreakCounter = 0
         for(i <- 0 until matrix.length - 1) {
             isFilled = true
             for(j <- 1 until matrix(0).length - 1){
@@ -169,12 +177,20 @@ class Game() {
             }
             //if line is filled, give points and move every line above down one step
             if(isFilled)
-                points += 1000
-                println(s"points: $points")
+                lineBreakCounter += 1
                 for(y <- 0 until i;
                     x <- 1 until 11)
                     matrix(i - y)(x) = matrix(i - 1 - y)(x)
         }
+        //add points
+        if (lineBreakCounter == 1)
+            points += 400
+        else if (lineBreakCounter == 2)
+            points += 800
+        else if (lineBreakCounter == 3)
+            points += 1600
+        else if (lineBreakCounter == 4)
+            points += 3200
     }
 
     def checkForLoss(): Boolean = {
@@ -191,6 +207,13 @@ class Game() {
         checkLinesAndClear()
     }
 
+    def gameOverSequence(): Unit = {
+        for(i <- 0 until 20)
+            for(j <- 1 until 11)
+                window.draw(j, i, java.awt.Color(0x44, 0x44, 0x44))
+            Thread.sleep(50)
+    }
+
     def updateFalling(canThisShitFall: Boolean): Unit = {
         if (canThisShitFall) //if tetromino can fall
             eraseFalling()
@@ -201,11 +224,13 @@ class Game() {
             updatePosition()
         else
             updateLanded()
+            respawn()
+            updateText()
+            landDisplayState = 1 //tells display() to draw landed blocks
             if (checkForLoss())
+                landDisplayState = 2
                 gameOff = true
                 println(Console.RED + "YOUR LOOSER !")
-            respawn()
-            landDisplayState = 1 //tells display() to draw landed blocks
         
         stopMovinglmfao() //makes the tetromino stop moving left/right if moving HAHAHHAHAHAH
     }
@@ -214,6 +239,8 @@ class Game() {
         if (state == 1)
             drawLanded()
             landDisplayState = 0
+        if(state == 2)
+            gameOverSequence()
     }
 
     def willFall(): Boolean = {
@@ -232,6 +259,7 @@ class Game() {
     }
 
     def gameLoop(): Unit = {
+        updateText() //initialize text
         while(!gameOff) {
             val t0: Long = System.currentTimeMillis
 
@@ -248,7 +276,31 @@ class Game() {
 
 
     def initGame(): Unit =
-        println(Console.GREEN + "initializing game !")
+        for(i <- 2 until 8;
+            j <- 2 until 18){
+                if(i == 2 || (i == 7 && (j <= 7 || j >= 12)) || j == 2 || j == 17 )
+                    window.drawFull(j, i, java.awt.Color(0x1c, 0x2b, 0x5b))
+                else
+                    window.drawFull(j, i, java.awt.Color(0x0e, 0x16, 0x21))
+            }
+        for(i <- 8 until 13;
+            j <- 7 until 13){
+                if(j == 7 || j == 12 || i == 12)
+                    window.drawFull(j, i, java.awt.Color(0x1c, 0x2b, 0x5b))
+                else
+                    window.drawFull(j, i, java.awt.Color(0x0e, 0x16, 0x21))
+            }
+
+        window.typeWriter("T",  3, 2, Color.red,    175,  3, 10)
+        window.typeWriter("E",  5, 2, Color.orange, 175, 18, 10)
+        window.typeWriter("T",  7, 2, Color.yellow, 175, 33, 10)
+        window.typeWriter("R",  9, 2, Color.green,  175, 48, 10)
+        window.typeWriter("I", 11, 2, Color.cyan,   175, 63, 10)
+        window.typeWriter("S", 13, 2, Color.purple, 175, 78, 10)
+        Thread.sleep(500)
+        for(i <- 0 until 20;
+            j <- 0 until 20)
+            window.clear(j, i)
     
     def startGame(): Unit =
         gameLoop()

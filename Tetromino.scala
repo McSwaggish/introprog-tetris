@@ -8,7 +8,8 @@ object Tetromino {
     val spawnOffset: Vector[Int] = Vector(3, 0)
     val topLeft:     Array[Int]  = spawnOffset.toArray
 
-    var tetrominoIndex: Int = java.util.Random().nextInt(5) //cant start with S or Z
+    var tetrominoIndex:     Int = java.util.Random().nextInt(5) //cant start with S or Z
+    var nextTetrominoIndex: Int = java.util.Random().nextInt(7)
 
     //potential next positions, if conditions are met
     var potentialOffsetX: Int = 0
@@ -241,7 +242,8 @@ object Tetromino {
     
     def respawn(): Unit =
         rotation = 0
-        tetrominoIndex = java.util.Random().nextInt(7)
+        tetrominoIndex = nextTetrominoIndex
+        nextTetrominoIndex = java.util.Random().nextInt(7)
         topLeft(0) = spawnOffset(0)
         topLeft(1) = spawnOffset(1)
 
