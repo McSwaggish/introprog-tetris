@@ -312,7 +312,7 @@ class Game() {
         window.typeWriter("R",  9, 2, Color.green,  175, 48, 10)
         window.typeWriter("I", 11, 2, Color.cyan,   175, 63, 10)
         window.typeWriter("S", 13, 2, Color.purple, 175, 78, 10)
-        Thread.sleep(500)
+        Thread.sleep(3000)
         for(i <- 0 until 20;
             j <- 0 until 20)
             window.clear(j, i)
