@@ -16,13 +16,13 @@ object Game {
         import java.awt.Color as JavaMegaGay
         val cerise = JavaMegaGay(0xe9, 0x38, 0x67)
         val black  = JavaMegaGay(0x00, 0x00, 0x00) //erasing tetrominoes
-        val green  = JavaMegaGay(0x72, 0xcb, 0x3b) //1
-        val blue   = JavaMegaGay(0x03, 0x41, 0xae) //2
-        val yellow = JavaMegaGay(0xff, 0xd5, 0x00) //3
-        val orange = JavaMegaGay(0xff, 0x97, 0x1c) //4
-        val red    = JavaMegaGay(0xff, 0x31, 0x13) //5
-        val cyan   = JavaMegaGay(0x00, 0xff, 0xff) //6
-        val purple = JavaMegaGay(0x80, 0x00, 0x80) //7
+        val green  = JavaMegaGay(0x00, 0xc5, 0x2e) //1
+        val blue   = JavaMegaGay(0x00, 0x60, 0xcf) //2
+        val yellow = JavaMegaGay(0xff, 0xe4, 0x24) //3
+        val orange = JavaMegaGay(0xff, 0xa5, 0x00) //4
+        val red    = JavaMegaGay(0xf0, 0x14, 0x00) //5
+        val cyan   = JavaMegaGay(0x00, 0xb6, 0xe3) //6
+        val purple = JavaMegaGay(0xa6, 0x18, 0xc2) //7
         val pillar = JavaMegaGay(0x33, 0xaa, 0xff) //8
     }
 
@@ -162,8 +162,8 @@ class Game() {
     def updateText(): Unit = {
         for(i <- 2 until 4;
             j <- 13 until 20)
-            window.clear(j, i)
-        window.typeWriter(s"Points: $points", 13, 2, java.awt.Color(0xff, 0xff, 0xff), 30, 0, 0)
+            window.clear2(j, i)
+        window.typeWriter(s"Points: $points", 13, 2, java.awt.Color(0x00, 0x00, 0x00), 30, 0, 0)
     }
 
     def checkLinesAndClear(): Unit = {
@@ -184,13 +184,13 @@ class Game() {
         }
         //add points
         if (lineBreakCounter == 1)
-            points += 400
+            points += 40
         else if (lineBreakCounter == 2)
-            points += 800
+            points += 100
         else if (lineBreakCounter == 3)
-            points += 1600
+            points += 300
         else if (lineBreakCounter == 4)
-            points += 3200
+            points += 1200
     }
 
     def checkForLoss(): Boolean = {
@@ -208,11 +208,11 @@ class Game() {
     }
 
     def nextPieceDisplay(): Unit = {
-        window.typeWriter("Next: ", 13, 6, java.awt.Color(0xff, 0xff, 0xff), 30, 0, -15)
+        window.typeWriter("Next: ", 13, 6, java.awt.Color(0x00, 0x00, 0x00), 30, 0, -15)
         
         for(i <- 7 until 11;
             j <- 13 until 17)
-            window.clear(j, i)
+            window.clear2(j, i)
         
         for(i <- 0 until nextTet.length;
             j <- 0 until nextTet(0).length)
@@ -272,6 +272,7 @@ class Game() {
     }
 
     def gameLoop(): Unit = {
+        drawLanded()
         updateText() //initialize text
         nextPieceDisplay()
         while(!gameOff) {
@@ -315,7 +316,7 @@ class Game() {
         Thread.sleep(3000)
         for(i <- 0 until 20;
             j <- 0 until 20)
-            window.clear(j, i)
+            window.clear2(j, i)
     
     def startGame(): Unit =
         gameLoop()
